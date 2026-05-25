@@ -44,6 +44,8 @@ test-suite relay-test
       , containers >=0.8 && <0.9
       , relay
       , uuid-types >=1.0 && <1.1
+      , async >=2.2 && <2.3
+      , random >=1.2 && <1.4
       , tasty >=1.4
       , tasty-hunit >=0.10
       , tasty-quickcheck >=0.10
