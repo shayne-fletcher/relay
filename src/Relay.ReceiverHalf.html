@@ -1,2 +1,130 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Relay.ReceiverHalf</span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-2"></span></pre></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-comment">-- |</span><span>
+</span><span id="line-2"></span><span class="hs-comment">-- Module      : Relay.ReceiverHalf</span><span>
+</span><span id="line-3"></span><span class="hs-comment">-- Description : Receiver half of the sequencing protocol.</span><span>
+</span><span id="line-4"></span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="Relay.ReceiverHalf.html"><span class="hs-identifier">Relay.ReceiverHalf</span></a></span><span>
+</span><span id="line-5"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="Relay.ReceiverHalf.html#ReceiverHalf"><span class="hs-identifier">ReceiverHalf</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-6"></span><span>    </span><span class="annot"><a href="Relay.ReceiverHalf.html#emptyReceiver"><span class="hs-identifier">emptyReceiver</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-7"></span><span>    </span><span class="annot"><a href="Relay.ReceiverHalf.html#receive"><span class="hs-identifier">receive</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-8"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">where</span><span>
+</span><span id="line-10"></span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Map.Strict</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Map</span></span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Map.Strict</span></span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Map</span></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Relay.Session.html"><span class="hs-identifier">Relay.Session</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier">Nat</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span>
+</span><span id="line-15"></span><span class="annot"><span class="hs-comment">-- | Local state for one session's in-order delivery.</span></span><span>
+</span><span id="line-16"></span><span class="hs-keyword">data</span><span> </span><span id="ReceiverHalf"><span class="annot"><a href="Relay.ReceiverHalf.html#ReceiverHalf"><span class="hs-identifier hs-var">ReceiverHalf</span></a></span></span><span> </span><span id="local-6989586621679053488"><span class="annot"><a href="#local-6989586621679053488"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ReceiverHalf"><span class="annot"><a href="Relay.ReceiverHalf.html#ReceiverHalf"><span class="hs-identifier hs-var">ReceiverHalf</span></a></span></span><span>
+</span><span id="line-17"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="expected"><span class="annot"><span class="annottext">forall a. ReceiverHalf a -&gt; Nat
+</span><a href="Relay.ReceiverHalf.html#expected"><span class="hs-identifier hs-var hs-var">expected</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-18"></span><span>    </span><span id="pending"><span class="annot"><span class="annottext">forall a. ReceiverHalf a -&gt; Map Nat a
+</span><a href="Relay.ReceiverHalf.html#pending"><span class="hs-identifier hs-var hs-var">pending</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Map</span></span><span> </span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053488"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-19"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-20"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679053527"><span id="local-6989586621679053536"><span id="local-6989586621679053541"><span class="annot"><span class="annottext">Int -&gt; ReceiverHalf a -&gt; ShowS
+[ReceiverHalf a] -&gt; ShowS
+ReceiverHalf a -&gt; String
+(Int -&gt; ReceiverHalf a -&gt; ShowS)
+-&gt; (ReceiverHalf a -&gt; String)
+-&gt; ([ReceiverHalf a] -&gt; ShowS)
+-&gt; Show (ReceiverHalf a)
+forall a. Show a =&gt; Int -&gt; ReceiverHalf a -&gt; ShowS
+forall a. Show a =&gt; [ReceiverHalf a] -&gt; ShowS
+forall a. Show a =&gt; ReceiverHalf a -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+$cshowsPrec :: forall a. Show a =&gt; Int -&gt; ReceiverHalf a -&gt; ShowS
+showsPrec :: Int -&gt; ReceiverHalf a -&gt; ShowS
+$cshow :: forall a. Show a =&gt; ReceiverHalf a -&gt; String
+show :: ReceiverHalf a -&gt; String
+$cshowList :: forall a. Show a =&gt; [ReceiverHalf a] -&gt; ShowS
+showList :: [ReceiverHalf a] -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679053548"><span id="local-6989586621679053555"><span class="annot"><span class="annottext">ReceiverHalf a -&gt; ReceiverHalf a -&gt; Bool
+(ReceiverHalf a -&gt; ReceiverHalf a -&gt; Bool)
+-&gt; (ReceiverHalf a -&gt; ReceiverHalf a -&gt; Bool)
+-&gt; Eq (ReceiverHalf a)
+forall a. Eq a =&gt; ReceiverHalf a -&gt; ReceiverHalf a -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+$c== :: forall a. Eq a =&gt; ReceiverHalf a -&gt; ReceiverHalf a -&gt; Bool
+== :: ReceiverHalf a -&gt; ReceiverHalf a -&gt; Bool
+$c/= :: forall a. Eq a =&gt; ReceiverHalf a -&gt; ReceiverHalf a -&gt; Bool
+/= :: ReceiverHalf a -&gt; ReceiverHalf a -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-21"></span><span>
+</span><span id="line-22"></span><span class="annot"><span class="hs-comment">-- | Initial receiver state. The first expected sequence number is 1.</span></span><span>
+</span><span id="line-23"></span><span id="local-6989586621679053505"><span class="annot"><a href="Relay.ReceiverHalf.html#emptyReceiver"><span class="hs-identifier hs-type">emptyReceiver</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Relay.ReceiverHalf.html#ReceiverHalf"><span class="hs-identifier hs-type">ReceiverHalf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053505"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-24"></span><span id="emptyReceiver"><span class="annot"><span class="annottext">emptyReceiver :: forall a. ReceiverHalf a
+</span><a href="Relay.ReceiverHalf.html#emptyReceiver"><span class="hs-identifier hs-var hs-var">emptyReceiver</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Relay.ReceiverHalf.html#ReceiverHalf"><span class="hs-identifier hs-type">ReceiverHalf</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><span class="annottext">expected :: Nat
+</span><a href="Relay.ReceiverHalf.html#expected"><span class="hs-identifier hs-var">expected</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nat
+</span><span class="hs-number">1</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">pending :: Map Nat a
+</span><a href="Relay.ReceiverHalf.html#pending"><span class="hs-identifier hs-var">pending</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Map Nat a
+forall k a. Map k a
+</span><span class="hs-identifier hs-var">Map.empty</span></span><span class="hs-special">}</span><span>
+</span><span id="line-25"></span><span>
+</span><span id="line-26"></span><span class="hs-comment">-- | Process one arriving frame and return the updated state and any</span><span>
+</span><span id="line-27"></span><span class="hs-comment">-- newly deliverable payloads.</span><span>
+</span><span id="line-28"></span><span class="hs-comment">--</span><span>
+</span><span id="line-29"></span><span class="hs-comment">-- * Duplicate (@n &lt; expected@): dropped silently, no state change.</span><span>
+</span><span id="line-30"></span><span class="hs-comment">-- * Out-of-order (@n &gt; expected@): buffered in @pending@, no output.</span><span>
+</span><span id="line-31"></span><span class="hs-comment">-- * In-order (@n == expected@): delivered, then consecutive entries</span><span>
+</span><span id="line-32"></span><span class="hs-comment">--   flushed from @pending@.</span><span>
+</span><span id="line-33"></span><span id="local-6989586621679053509"><span class="annot"><a href="Relay.ReceiverHalf.html#receive"><span class="hs-identifier hs-type">receive</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679053509"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Relay.ReceiverHalf.html#ReceiverHalf"><span class="hs-identifier hs-type">ReceiverHalf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053509"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Relay.ReceiverHalf.html#ReceiverHalf"><span class="hs-identifier hs-type">ReceiverHalf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053509"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679053509"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span></span><span>
+</span><span id="line-34"></span><span id="receive"><span class="annot"><span class="annottext">receive :: forall a. Nat -&gt; a -&gt; ReceiverHalf a -&gt; (ReceiverHalf a, [a])
+</span><a href="Relay.ReceiverHalf.html#receive"><span class="hs-identifier hs-var hs-var">receive</span></a></span></span><span> </span><span id="local-6989586621679053568"><span class="annot"><span class="annottext">Nat
+</span><a href="#local-6989586621679053568"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span id="local-6989586621679053569"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679053569"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span id="local-6989586621679053570"><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053570"><span class="hs-identifier hs-var">rh</span></a></span></span><span>
+</span><span id="line-35"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Nat
+</span><a href="#local-6989586621679053568"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Nat -&gt; Nat -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;</span></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a -&gt; Nat
+forall a. ReceiverHalf a -&gt; Nat
+</span><a href="Relay.ReceiverHalf.html#expected"><span class="hs-identifier hs-var">expected</span></a></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053570"><span class="hs-identifier hs-var">rh</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053570"><span class="hs-identifier hs-var">rh</span></a></span><span class="hs-special">,</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">)</span><span>
+</span><span id="line-36"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Nat
+</span><a href="#local-6989586621679053568"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Nat -&gt; Nat -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&gt;</span></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a -&gt; Nat
+forall a. ReceiverHalf a -&gt; Nat
+</span><a href="Relay.ReceiverHalf.html#expected"><span class="hs-identifier hs-var">expected</span></a></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053570"><span class="hs-identifier hs-var">rh</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053570"><span class="hs-identifier hs-var">rh</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><a href="Relay.ReceiverHalf.html#pending"><span class="hs-identifier hs-var">pending</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Map.insert</span></span><span> </span><span class="annot"><a href="#local-6989586621679053568"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053569"><span class="hs-identifier hs-type">v</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Relay.ReceiverHalf.html#pending"><span class="hs-identifier hs-var">pending</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053570"><span class="hs-identifier hs-type">rh</span></a></span><span class="hs-special">)</span><span class="hs-special">}</span><span class="hs-special">,</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">)</span><span>
+</span><span id="line-37"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">otherwise</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a -&gt; [a] -&gt; (ReceiverHalf a, [a])
+forall {a}. ReceiverHalf a -&gt; [a] -&gt; (ReceiverHalf a, [a])
+</span><a href="#local-6989586621679053574"><span class="hs-identifier hs-var">flush</span></a></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053570"><span class="hs-identifier hs-var">rh</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><a href="Relay.ReceiverHalf.html#expected"><span class="hs-identifier hs-var">expected</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Relay.ReceiverHalf.html#expected"><span class="hs-identifier hs-var">expected</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053570"><span class="hs-identifier hs-type">rh</span></a></span><span> </span><span class="annot"><span class="hs-operator hs-type">+</span></span><span> </span><span class="annot"><span class="hs-number">1</span></span><span class="hs-special">}</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679053569"><span class="hs-identifier hs-var">v</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-38"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-39"></span><span>    </span><span id="local-6989586621679053574"><span class="annot"><span class="annottext">flush :: ReceiverHalf a -&gt; [a] -&gt; (ReceiverHalf a, [a])
+</span><a href="#local-6989586621679053574"><span class="hs-identifier hs-var hs-var">flush</span></a></span></span><span> </span><span id="local-6989586621679053579"><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053579"><span class="hs-identifier hs-var">rh'</span></a></span></span><span> </span><span id="local-6989586621679053580"><span class="annot"><span class="annottext">[a]
+</span><a href="#local-6989586621679053580"><span class="hs-identifier hs-var">acc</span></a></span></span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-40"></span><span>      </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Map Nat a -&gt; Maybe ((Nat, a), Map Nat a)
+forall k a. Map k a -&gt; Maybe ((k, a), Map k a)
+</span><span class="hs-identifier hs-var">Map.minViewWithKey</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ReceiverHalf a -&gt; Map Nat a
+forall a. ReceiverHalf a -&gt; Map Nat a
+</span><a href="Relay.ReceiverHalf.html#pending"><span class="hs-identifier hs-var">pending</span></a></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053579"><span class="hs-identifier hs-var">rh'</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-41"></span><span>        </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span id="local-6989586621679053582"><span class="annot"><span class="annottext">Nat
+</span><a href="#local-6989586621679053582"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679053583"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679053583"><span class="hs-identifier hs-var">a</span></a></span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span id="local-6989586621679053584"><span class="annot"><span class="annottext">Map Nat a
+</span><a href="#local-6989586621679053584"><span class="hs-identifier hs-var">rest</span></a></span></span><span class="hs-special">)</span><span>
+</span><span id="line-42"></span><span>          </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Nat
+</span><a href="#local-6989586621679053582"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="annot"><span class="annottext">Nat -&gt; Nat -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">==</span></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a -&gt; Nat
+forall a. ReceiverHalf a -&gt; Nat
+</span><a href="Relay.ReceiverHalf.html#expected"><span class="hs-identifier hs-var">expected</span></a></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053579"><span class="hs-identifier hs-var">rh'</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-43"></span><span>              </span><span class="annot"><span class="annottext">ReceiverHalf a -&gt; [a] -&gt; (ReceiverHalf a, [a])
+</span><a href="#local-6989586621679053574"><span class="hs-identifier hs-var">flush</span></a></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053579"><span class="hs-identifier hs-var">rh'</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><a href="Relay.ReceiverHalf.html#expected"><span class="hs-identifier hs-var">expected</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="#local-6989586621679053582"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><span class="hs-operator hs-type">+</span></span><span> </span><span class="annot"><span class="hs-number">1</span></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Relay.ReceiverHalf.html#pending"><span class="hs-identifier hs-var">pending</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="#local-6989586621679053584"><span class="hs-identifier hs-type">rest</span></a></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">[a]
+</span><a href="#local-6989586621679053580"><span class="hs-identifier hs-var">acc</span></a></span><span> </span><span class="annot"><span class="annottext">[a] -&gt; [a] -&gt; [a]
+forall a. [a] -&gt; [a] -&gt; [a]
+</span><span class="hs-operator hs-var">++</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679053583"><span class="hs-identifier hs-var">a</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span>
+</span><span id="line-44"></span><span>        </span><span class="annot"><span class="annottext">Maybe ((Nat, a), Map Nat a)
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053579"><span class="hs-identifier hs-var">rh'</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[a]
+</span><a href="#local-6989586621679053580"><span class="hs-identifier hs-var">acc</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-45"></span></pre></body></html>

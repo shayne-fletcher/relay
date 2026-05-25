@@ -1,2 +1,58 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Relay.SenderHalf</span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-2"></span></pre></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-comment">-- |</span><span>
+</span><span id="line-2"></span><span class="hs-comment">-- Module      : Relay.SenderHalf</span><span>
+</span><span id="line-3"></span><span class="hs-comment">-- Description : Sender half of the sequencing protocol.</span><span>
+</span><span id="line-4"></span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="Relay.SenderHalf.html"><span class="hs-identifier">Relay.SenderHalf</span></a></span><span>
+</span><span id="line-5"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="Relay.SenderHalf.html#SenderHalf"><span class="hs-identifier">SenderHalf</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-6"></span><span>    </span><span class="annot"><a href="Relay.SenderHalf.html#emptySender"><span class="hs-identifier">emptySender</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-7"></span><span>    </span><span class="annot"><a href="Relay.SenderHalf.html#assign"><span class="hs-identifier">assign</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-8"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">where</span><span>
+</span><span id="line-10"></span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Relay.Session.html"><span class="hs-identifier">Relay.Session</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier">Nat</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span>
+</span><span id="line-13"></span><span class="annot"><span class="hs-comment">-- | Local state of one sending session.</span></span><span>
+</span><span id="line-14"></span><span class="hs-keyword">newtype</span><span> </span><span id="SenderHalf"><span class="annot"><a href="Relay.SenderHalf.html#SenderHalf"><span class="hs-identifier hs-var">SenderHalf</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="SenderHalf"><span class="annot"><a href="Relay.SenderHalf.html#SenderHalf"><span class="hs-identifier hs-var">SenderHalf</span></a></span></span><span>
+</span><span id="line-15"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="nextSeq"><span class="annot"><span class="annottext">SenderHalf -&gt; Nat
+</span><a href="Relay.SenderHalf.html#nextSeq"><span class="hs-identifier hs-var hs-var">nextSeq</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span>
+</span><span id="line-16"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-17"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679053452"><span id="local-6989586621679053458"><span id="local-6989586621679053462"><span class="annot"><span class="annottext">Int -&gt; SenderHalf -&gt; ShowS
+[SenderHalf] -&gt; ShowS
+SenderHalf -&gt; String
+(Int -&gt; SenderHalf -&gt; ShowS)
+-&gt; (SenderHalf -&gt; String)
+-&gt; ([SenderHalf] -&gt; ShowS)
+-&gt; Show SenderHalf
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+$cshowsPrec :: Int -&gt; SenderHalf -&gt; ShowS
+showsPrec :: Int -&gt; SenderHalf -&gt; ShowS
+$cshow :: SenderHalf -&gt; String
+show :: SenderHalf -&gt; String
+$cshowList :: [SenderHalf] -&gt; ShowS
+showList :: [SenderHalf] -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679053467"><span id="local-6989586621679053472"><span class="annot"><span class="annottext">SenderHalf -&gt; SenderHalf -&gt; Bool
+(SenderHalf -&gt; SenderHalf -&gt; Bool)
+-&gt; (SenderHalf -&gt; SenderHalf -&gt; Bool) -&gt; Eq SenderHalf
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+$c== :: SenderHalf -&gt; SenderHalf -&gt; Bool
+== :: SenderHalf -&gt; SenderHalf -&gt; Bool
+$c/= :: SenderHalf -&gt; SenderHalf -&gt; Bool
+/= :: SenderHalf -&gt; SenderHalf -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-18"></span><span>
+</span><span id="line-19"></span><span class="annot"><span class="hs-comment">-- | Initial sender state. The first assigned sequence number is 1.</span></span><span>
+</span><span id="line-20"></span><span class="annot"><a href="Relay.SenderHalf.html#emptySender"><span class="hs-identifier hs-type">emptySender</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Relay.SenderHalf.html#SenderHalf"><span class="hs-identifier hs-type">SenderHalf</span></a></span><span>
+</span><span id="line-21"></span><span id="emptySender"><span class="annot"><span class="annottext">emptySender :: SenderHalf
+</span><a href="Relay.SenderHalf.html#emptySender"><span class="hs-identifier hs-var hs-var">emptySender</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Relay.SenderHalf.html#SenderHalf"><span class="hs-identifier hs-type">SenderHalf</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><span class="annottext">nextSeq :: Nat
+</span><a href="Relay.SenderHalf.html#nextSeq"><span class="hs-identifier hs-var">nextSeq</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nat
+</span><span class="hs-number">1</span></span><span class="hs-special">}</span><span>
+</span><span id="line-22"></span><span>
+</span><span id="line-23"></span><span class="annot"><span class="hs-comment">-- | Return the next sequence number and advance the counter.</span></span><span>
+</span><span id="line-24"></span><span class="annot"><a href="Relay.SenderHalf.html#assign"><span class="hs-identifier hs-type">assign</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Relay.SenderHalf.html#SenderHalf"><span class="hs-identifier hs-type">SenderHalf</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Relay.SenderHalf.html#SenderHalf"><span class="hs-identifier hs-type">SenderHalf</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-25"></span><span id="assign"><span class="annot"><span class="annottext">assign :: SenderHalf -&gt; (Nat, SenderHalf)
+</span><a href="Relay.SenderHalf.html#assign"><span class="hs-identifier hs-var hs-var">assign</span></a></span></span><span> </span><span id="local-6989586621679053478"><span class="annot"><span class="annottext">SenderHalf
+</span><a href="#local-6989586621679053478"><span class="hs-identifier hs-var">sh</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">SenderHalf -&gt; Nat
+</span><a href="Relay.SenderHalf.html#nextSeq"><span class="hs-identifier hs-var">nextSeq</span></a></span><span> </span><span class="annot"><span class="annottext">SenderHalf
+</span><a href="#local-6989586621679053478"><span class="hs-identifier hs-var">sh</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">SenderHalf
+</span><a href="#local-6989586621679053478"><span class="hs-identifier hs-var">sh</span></a></span><span> </span><span class="hs-special">{</span><span class="annot"><a href="Relay.SenderHalf.html#nextSeq"><span class="hs-identifier hs-var">nextSeq</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Relay.SenderHalf.html#nextSeq"><span class="hs-identifier hs-var">nextSeq</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053478"><span class="hs-identifier hs-type">sh</span></a></span><span> </span><span class="annot"><span class="hs-operator hs-type">+</span></span><span> </span><span class="annot"><span class="hs-number">1</span></span><span class="hs-special">}</span><span class="hs-special">)</span><span>
+</span><span id="line-26"></span></pre></body></html>

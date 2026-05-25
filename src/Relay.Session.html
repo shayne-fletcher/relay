@@ -1,2 +1,115 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Relay.Session</span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-2"></span></pre></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-comment">-- |</span><span>
+</span><span id="line-2"></span><span class="hs-comment">-- Module      : Relay.Session</span><span>
+</span><span id="line-3"></span><span class="hs-comment">-- Description : Session identifiers, sequence numbers, and wire frames.</span><span>
+</span><span id="line-4"></span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="Relay.Session.html"><span class="hs-identifier">Relay.Session</span></a></span><span>
+</span><span id="line-5"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="Relay.Session.html#SessionId"><span class="hs-identifier">SessionId</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-6"></span><span>    </span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier">Nat</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-7"></span><span>    </span><span class="annot"><a href="Relay.Session.html#Frame"><span class="hs-identifier">Frame</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-8"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">where</span><span>
+</span><span id="line-10"></span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.UUID.Types</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">UUID</span></span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span>
+</span><span id="line-13"></span><span class="annot"><span class="hs-comment">-- | One per sending actor instance.</span></span><span>
+</span><span id="line-14"></span><span class="hs-keyword">newtype</span><span> </span><span id="SessionId"><span class="annot"><a href="Relay.Session.html#SessionId"><span class="hs-identifier hs-var">SessionId</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="SessionId"><span class="annot"><a href="Relay.Session.html#SessionId"><span class="hs-identifier hs-var">SessionId</span></a></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">UUID</span></span><span>
+</span><span id="line-15"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679053316"><span id="local-6989586621679053322"><span id="local-6989586621679053326"><span class="annot"><span class="annottext">Int -&gt; SessionId -&gt; ShowS
+[SessionId] -&gt; ShowS
+SessionId -&gt; String
+(Int -&gt; SessionId -&gt; ShowS)
+-&gt; (SessionId -&gt; String)
+-&gt; ([SessionId] -&gt; ShowS)
+-&gt; Show SessionId
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+$cshowsPrec :: Int -&gt; SessionId -&gt; ShowS
+showsPrec :: Int -&gt; SessionId -&gt; ShowS
+$cshow :: SessionId -&gt; String
+show :: SessionId -&gt; String
+$cshowList :: [SessionId] -&gt; ShowS
+showList :: [SessionId] -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679053331"><span id="local-6989586621679053336"><span class="annot"><span class="annottext">SessionId -&gt; SessionId -&gt; Bool
+(SessionId -&gt; SessionId -&gt; Bool)
+-&gt; (SessionId -&gt; SessionId -&gt; Bool) -&gt; Eq SessionId
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+$c== :: SessionId -&gt; SessionId -&gt; Bool
+== :: SessionId -&gt; SessionId -&gt; Bool
+$c/= :: SessionId -&gt; SessionId -&gt; Bool
+/= :: SessionId -&gt; SessionId -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679053345"><span id="local-6989586621679053350"><span id="local-6989586621679053354"><span id="local-6989586621679053358"><span id="local-6989586621679053362"><span id="local-6989586621679053366"><span id="local-6989586621679053370"><span class="annot"><span class="annottext">Eq SessionId
+Eq SessionId =&gt;
+(SessionId -&gt; SessionId -&gt; Ordering)
+-&gt; (SessionId -&gt; SessionId -&gt; Bool)
+-&gt; (SessionId -&gt; SessionId -&gt; Bool)
+-&gt; (SessionId -&gt; SessionId -&gt; Bool)
+-&gt; (SessionId -&gt; SessionId -&gt; Bool)
+-&gt; (SessionId -&gt; SessionId -&gt; SessionId)
+-&gt; (SessionId -&gt; SessionId -&gt; SessionId)
+-&gt; Ord SessionId
+SessionId -&gt; SessionId -&gt; Bool
+SessionId -&gt; SessionId -&gt; Ordering
+SessionId -&gt; SessionId -&gt; SessionId
+forall a.
+Eq a =&gt;
+(a -&gt; a -&gt; Ordering)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; Ord a
+$ccompare :: SessionId -&gt; SessionId -&gt; Ordering
+compare :: SessionId -&gt; SessionId -&gt; Ordering
+$c&lt; :: SessionId -&gt; SessionId -&gt; Bool
+&lt; :: SessionId -&gt; SessionId -&gt; Bool
+$c&lt;= :: SessionId -&gt; SessionId -&gt; Bool
+&lt;= :: SessionId -&gt; SessionId -&gt; Bool
+$c&gt; :: SessionId -&gt; SessionId -&gt; Bool
+&gt; :: SessionId -&gt; SessionId -&gt; Bool
+$c&gt;= :: SessionId -&gt; SessionId -&gt; Bool
+&gt;= :: SessionId -&gt; SessionId -&gt; Bool
+$cmax :: SessionId -&gt; SessionId -&gt; SessionId
+max :: SessionId -&gt; SessionId -&gt; SessionId
+$cmin :: SessionId -&gt; SessionId -&gt; SessionId
+min :: SessionId -&gt; SessionId -&gt; SessionId
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-16"></span><span>
+</span><span id="line-17"></span><span class="annot"><span class="hs-comment">-- | Sequence number type.</span></span><span>
+</span><span id="line-18"></span><span class="hs-keyword">type</span><span> </span><span id="Nat"><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Word</span></span><span>
+</span><span id="line-19"></span><span>
+</span><span id="line-20"></span><span class="annot"><span class="hs-comment">-- | A sequenced frame on the wire.</span></span><span>
+</span><span id="line-21"></span><span class="hs-keyword">data</span><span> </span><span id="Frame"><span class="annot"><a href="Relay.Session.html#Frame"><span class="hs-identifier hs-var">Frame</span></a></span></span><span> </span><span id="local-6989586621679053304"><span class="annot"><a href="#local-6989586621679053304"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Frame"><span class="annot"><a href="Relay.Session.html#Frame"><span class="hs-identifier hs-var">Frame</span></a></span></span><span>
+</span><span id="line-22"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="frameSession"><span class="annot"><span class="annottext">forall a. Frame a -&gt; SessionId
+</span><a href="Relay.Session.html#frameSession"><span class="hs-identifier hs-var hs-var">frameSession</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Relay.Session.html#SessionId"><span class="hs-identifier hs-type">SessionId</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-23"></span><span>    </span><span id="frameSeq"><span class="annot"><span class="annottext">forall a. Frame a -&gt; Nat
+</span><a href="Relay.Session.html#frameSeq"><span class="hs-identifier hs-var hs-var">frameSeq</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-24"></span><span>    </span><span id="framePayload"><span class="annot"><span class="annottext">forall a. Frame a -&gt; a
+</span><a href="Relay.Session.html#framePayload"><span class="hs-identifier hs-var hs-var">framePayload</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679053304"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-25"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-26"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679053387"><span id="local-6989586621679053394"><span id="local-6989586621679053399"><span class="annot"><span class="annottext">Int -&gt; Frame a -&gt; ShowS
+[Frame a] -&gt; ShowS
+Frame a -&gt; String
+(Int -&gt; Frame a -&gt; ShowS)
+-&gt; (Frame a -&gt; String) -&gt; ([Frame a] -&gt; ShowS) -&gt; Show (Frame a)
+forall a. Show a =&gt; Int -&gt; Frame a -&gt; ShowS
+forall a. Show a =&gt; [Frame a] -&gt; ShowS
+forall a. Show a =&gt; Frame a -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+$cshowsPrec :: forall a. Show a =&gt; Int -&gt; Frame a -&gt; ShowS
+showsPrec :: Int -&gt; Frame a -&gt; ShowS
+$cshow :: forall a. Show a =&gt; Frame a -&gt; String
+show :: Frame a -&gt; String
+$cshowList :: forall a. Show a =&gt; [Frame a] -&gt; ShowS
+showList :: [Frame a] -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679053404"><span id="local-6989586621679053410"><span class="annot"><span class="annottext">Frame a -&gt; Frame a -&gt; Bool
+(Frame a -&gt; Frame a -&gt; Bool)
+-&gt; (Frame a -&gt; Frame a -&gt; Bool) -&gt; Eq (Frame a)
+forall a. Eq a =&gt; Frame a -&gt; Frame a -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+$c== :: forall a. Eq a =&gt; Frame a -&gt; Frame a -&gt; Bool
+== :: Frame a -&gt; Frame a -&gt; Bool
+$c/= :: forall a. Eq a =&gt; Frame a -&gt; Frame a -&gt; Bool
+/= :: Frame a -&gt; Frame a -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span></pre></body></html>

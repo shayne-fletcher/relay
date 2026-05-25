@@ -1,2 +1,92 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Relay.Buffer</span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-2"></span></pre></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-comment">-- |</span><span>
+</span><span id="line-2"></span><span class="hs-comment">-- Module      : Relay.Buffer</span><span>
+</span><span id="line-3"></span><span class="hs-comment">-- Description : Multi-session reorder buffer.</span><span>
+</span><span id="line-4"></span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="Relay.Buffer.html"><span class="hs-identifier">Relay.Buffer</span></a></span><span>
+</span><span id="line-5"></span><span>  </span><span class="hs-special">(</span><span> </span><span class="annot"><a href="Relay.Buffer.html#Buffer"><span class="hs-identifier">Buffer</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><span id="line-6"></span><span>    </span><span class="annot"><a href="Relay.Buffer.html#emptyBuffer"><span class="hs-identifier">emptyBuffer</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-7"></span><span>    </span><span class="annot"><a href="Relay.Buffer.html#deliver"><span class="hs-identifier">deliver</span></a></span><span class="hs-special">,</span><span>
+</span><span id="line-8"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">where</span><span>
+</span><span id="line-10"></span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Map.Strict</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Map</span></span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Map.Strict</span></span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Map</span></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Relay.ReceiverHalf.html"><span class="hs-identifier">Relay.ReceiverHalf</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Relay.ReceiverHalf.html#ReceiverHalf"><span class="hs-identifier">ReceiverHalf</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Relay.ReceiverHalf.html#emptyReceiver"><span class="hs-identifier">emptyReceiver</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Relay.ReceiverHalf.html#receive"><span class="hs-identifier">receive</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Relay.Session.html"><span class="hs-identifier">Relay.Session</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier">Nat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Relay.Session.html#SessionId"><span class="hs-identifier">SessionId</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-15"></span><span>
+</span><span id="line-16"></span><span class="annot"><span class="hs-comment">-- | A reorder buffer: one 'ReceiverHalf' per session.</span></span><span>
+</span><span id="line-17"></span><span class="hs-keyword">newtype</span><span> </span><span id="Buffer"><span class="annot"><a href="Relay.Buffer.html#Buffer"><span class="hs-identifier hs-var">Buffer</span></a></span></span><span> </span><span id="local-6989586621679053617"><span class="annot"><a href="#local-6989586621679053617"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Buffer"><span class="annot"><a href="Relay.Buffer.html#Buffer"><span class="hs-identifier hs-var">Buffer</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Map</span></span><span> </span><span class="annot"><a href="Relay.Session.html#SessionId"><span class="hs-identifier hs-type">SessionId</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Relay.ReceiverHalf.html#ReceiverHalf"><span class="hs-identifier hs-type">ReceiverHalf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053617"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-18"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679053636"><span id="local-6989586621679053644"><span id="local-6989586621679053649"><span class="annot"><span class="annottext">Int -&gt; Buffer a -&gt; ShowS
+[Buffer a] -&gt; ShowS
+Buffer a -&gt; String
+(Int -&gt; Buffer a -&gt; ShowS)
+-&gt; (Buffer a -&gt; String) -&gt; ([Buffer a] -&gt; ShowS) -&gt; Show (Buffer a)
+forall a. Show a =&gt; Int -&gt; Buffer a -&gt; ShowS
+forall a. Show a =&gt; [Buffer a] -&gt; ShowS
+forall a. Show a =&gt; Buffer a -&gt; String
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+$cshowsPrec :: forall a. Show a =&gt; Int -&gt; Buffer a -&gt; ShowS
+showsPrec :: Int -&gt; Buffer a -&gt; ShowS
+$cshow :: forall a. Show a =&gt; Buffer a -&gt; String
+show :: Buffer a -&gt; String
+$cshowList :: forall a. Show a =&gt; [Buffer a] -&gt; ShowS
+showList :: [Buffer a] -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679053659"><span id="local-6989586621679053666"><span class="annot"><span class="annottext">Buffer a -&gt; Buffer a -&gt; Bool
+(Buffer a -&gt; Buffer a -&gt; Bool)
+-&gt; (Buffer a -&gt; Buffer a -&gt; Bool) -&gt; Eq (Buffer a)
+forall a. Eq a =&gt; Buffer a -&gt; Buffer a -&gt; Bool
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+$c== :: forall a. Eq a =&gt; Buffer a -&gt; Buffer a -&gt; Bool
+== :: Buffer a -&gt; Buffer a -&gt; Bool
+$c/= :: forall a. Eq a =&gt; Buffer a -&gt; Buffer a -&gt; Bool
+/= :: Buffer a -&gt; Buffer a -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-19"></span><span>
+</span><span id="line-20"></span><span class="annot"><span class="hs-comment">-- | An empty buffer with no sessions.</span></span><span>
+</span><span id="line-21"></span><span id="local-6989586621679053615"><span class="annot"><a href="Relay.Buffer.html#emptyBuffer"><span class="hs-identifier hs-type">emptyBuffer</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Relay.Buffer.html#Buffer"><span class="hs-identifier hs-type">Buffer</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053615"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-22"></span><span id="emptyBuffer"><span class="annot"><span class="annottext">emptyBuffer :: forall a. Buffer a
+</span><a href="Relay.Buffer.html#emptyBuffer"><span class="hs-identifier hs-var hs-var">emptyBuffer</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Map SessionId (ReceiverHalf a) -&gt; Buffer a
+forall a. Map SessionId (ReceiverHalf a) -&gt; Buffer a
+</span><a href="Relay.Buffer.html#Buffer"><span class="hs-identifier hs-var">Buffer</span></a></span><span> </span><span class="annot"><span class="annottext">Map SessionId (ReceiverHalf a)
+forall k a. Map k a
+</span><span class="hs-identifier hs-var">Map.empty</span></span><span>
+</span><span id="line-23"></span><span>
+</span><span id="line-24"></span><span class="hs-comment">-- | Route a frame to the correct 'ReceiverHalf', inserting</span><span>
+</span><span id="line-25"></span><span class="hs-comment">-- 'emptyReceiver' on first contact with a new session.</span><span>
+</span><span id="line-26"></span><span id="local-6989586621679053621"><span class="annot"><a href="Relay.Buffer.html#deliver"><span class="hs-identifier hs-type">deliver</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Relay.Session.html#SessionId"><span class="hs-identifier hs-type">SessionId</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Relay.Session.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679053621"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Relay.Buffer.html#Buffer"><span class="hs-identifier hs-type">Buffer</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053621"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Relay.Buffer.html#Buffer"><span class="hs-identifier hs-type">Buffer</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679053621"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679053621"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span></span><span>
+</span><span id="line-27"></span><span id="deliver"><span class="annot"><span class="annottext">deliver :: forall a. SessionId -&gt; Nat -&gt; a -&gt; Buffer a -&gt; (Buffer a, [a])
+</span><a href="Relay.Buffer.html#deliver"><span class="hs-identifier hs-var hs-var">deliver</span></a></span></span><span> </span><span id="local-6989586621679053682"><span class="annot"><span class="annottext">SessionId
+</span><a href="#local-6989586621679053682"><span class="hs-identifier hs-var">sid</span></a></span></span><span> </span><span id="local-6989586621679053683"><span class="annot"><span class="annottext">Nat
+</span><a href="#local-6989586621679053683"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span id="local-6989586621679053684"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679053684"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Relay.Buffer.html#Buffer"><span class="hs-identifier hs-type">Buffer</span></a></span><span> </span><span id="local-6989586621679053685"><span class="annot"><span class="annottext">Map SessionId (ReceiverHalf a)
+</span><a href="#local-6989586621679053685"><span class="hs-identifier hs-var">m</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-28"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679053686"><span class="annot"><span class="annottext">rh :: ReceiverHalf a
+</span><a href="#local-6989586621679053686"><span class="hs-identifier hs-var hs-var">rh</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a
+-&gt; SessionId -&gt; Map SessionId (ReceiverHalf a) -&gt; ReceiverHalf a
+forall k a. Ord k =&gt; a -&gt; k -&gt; Map k a -&gt; a
+</span><span class="hs-identifier hs-var">Map.findWithDefault</span></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a
+forall a. ReceiverHalf a
+</span><a href="Relay.ReceiverHalf.html#emptyReceiver"><span class="hs-identifier hs-var">emptyReceiver</span></a></span><span> </span><span class="annot"><span class="annottext">SessionId
+</span><a href="#local-6989586621679053682"><span class="hs-identifier hs-var">sid</span></a></span><span> </span><span class="annot"><span class="annottext">Map SessionId (ReceiverHalf a)
+</span><a href="#local-6989586621679053685"><span class="hs-identifier hs-var">m</span></a></span><span>
+</span><span id="line-29"></span><span>      </span><span class="hs-special">(</span><span id="local-6989586621679053688"><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053688"><span class="hs-identifier hs-var">rh'</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679053689"><span class="annot"><span class="annottext">[a]
+</span><a href="#local-6989586621679053689"><span class="hs-identifier hs-var">delivered</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nat -&gt; a -&gt; ReceiverHalf a -&gt; (ReceiverHalf a, [a])
+forall a. Nat -&gt; a -&gt; ReceiverHalf a -&gt; (ReceiverHalf a, [a])
+</span><a href="Relay.ReceiverHalf.html#receive"><span class="hs-identifier hs-var">receive</span></a></span><span> </span><span class="annot"><span class="annottext">Nat
+</span><a href="#local-6989586621679053683"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679053684"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053686"><span class="hs-identifier hs-var">rh</span></a></span><span>
+</span><span id="line-30"></span><span>   </span><span class="hs-keyword">in</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Map SessionId (ReceiverHalf a) -&gt; Buffer a
+forall a. Map SessionId (ReceiverHalf a) -&gt; Buffer a
+</span><a href="Relay.Buffer.html#Buffer"><span class="hs-identifier hs-var">Buffer</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">SessionId
+-&gt; ReceiverHalf a
+-&gt; Map SessionId (ReceiverHalf a)
+-&gt; Map SessionId (ReceiverHalf a)
+forall k a. Ord k =&gt; k -&gt; a -&gt; Map k a -&gt; Map k a
+</span><span class="hs-identifier hs-var">Map.insert</span></span><span> </span><span class="annot"><span class="annottext">SessionId
+</span><a href="#local-6989586621679053682"><span class="hs-identifier hs-var">sid</span></a></span><span> </span><span class="annot"><span class="annottext">ReceiverHalf a
+</span><a href="#local-6989586621679053688"><span class="hs-identifier hs-var">rh'</span></a></span><span> </span><span class="annot"><span class="annottext">Map SessionId (ReceiverHalf a)
+</span><a href="#local-6989586621679053685"><span class="hs-identifier hs-var">m</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">[a]
+</span><a href="#local-6989586621679053689"><span class="hs-identifier hs-var">delivered</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-31"></span></pre></body></html>
