@@ -118,6 +118,21 @@ This is the important multi-sender fact. Each session is an independent
 cell in the buffer; delivering to one session does not disturb another
 session's delivery state.
 
+The light categorical view is that `Buffer a` is a product of independent
+receiver halves:
+
+```haskell
+Buffer a ≅ Map SessionId (ReceiverHalf a)
+```
+
+A delivery for session `s` updates only the `s` component of that
+product. Updates to different components commute, which is why distinct
+sessions can share one buffer without interfering with each other.
+
+<p align="center">
+  <img src="./images/buffer.png" width="640" alt="Buffer as a product of independent receiver halves">
+</p>
+
 ### Global Protocol Law
 
 If a sender assigns sequences `1..n` and all `n` frames eventually reach
@@ -130,9 +145,8 @@ by the concurrent model.
 The local laws are stated as QuickCheck properties and unit tests. The
 end-to-end law runs through concurrent sender, chaos, and receiver tasks:
 
-Many sender halves feed the same wire. The receiver side is one shared
-`Buffer` `B`, a map from `SessionId` to that session's `ReceiverHalf`.
-The output is ordered within each session.
+Many sender halves feed the same wire; the receiver releases outputs in
+session order.
 
 Three tasks run as concurrent threads connected by channels. The sender
 iterates its payload list, stamps each item with `assign`, and writes
