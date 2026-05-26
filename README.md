@@ -129,10 +129,6 @@ A delivery for session `s` updates only the `s` component of that
 product. Updates to different components commute, which is why distinct
 sessions can share one buffer without interfering with each other.
 
-<p align="center">
-  <img src="./images/buffer.png" width="640" alt="Buffer as a product of independent receiver halves">
-</p>
-
 ### Global Protocol Law
 
 If a sender assigns sequences `1..n` and all `n` frames eventually reach
