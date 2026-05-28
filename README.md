@@ -47,8 +47,11 @@ newtype Buffer a = Buffer
   (Map SessionId (ReceiverHalf a))
 ```
 
-A `Frame` is the wire fact: session, sequence number, payload. The rest
-is local state.
+A `Frame` is the wire fact: session, sequence number, payload. `SessionId`
+names the sending instance. A sender may maintain several sequence counters
+under that session, one per destination stream. At a receiving actor's work
+queue, the destination stream is implicit, so the buffer keeps one
+`ReceiverHalf` per sender `SessionId`. The rest is local state.
 
 ## Dual Half-Sessions
 
