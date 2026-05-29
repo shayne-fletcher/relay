@@ -48,10 +48,19 @@ newtype Buffer a = Buffer
 ```
 
 A `Frame` is the wire fact: session, sequence number, payload. `SessionId`
-names the sending instance. A sender may maintain several sequence counters
-under that session, one per destination stream. At a receiving actor's work
-queue, the destination stream is implicit, so the buffer keeps one
-`ReceiverHalf` per sender `SessionId`. The rest is local state.
+names the sending instance. An ordered stream is determined by a sender
+session and a destination stream.
+
+`SenderHalf` is the sender-local half of one such stream: for a fixed
+sender session and destination, it owns `nextSeq`.
+
+`ReceiverHalf` is the receiver-local half of the same stream: for that
+same sender session and destination, it owns `expected` and `pending`.
+
+The two sides see the product from opposite ends. A sender session may
+have many `SenderHalf`s, one per destination stream. A receiver-side
+`Buffer` sits at one destination stream and contains many `ReceiverHalf`s,
+one per sender `SessionId`.
 
 ## Dual Half-Sessions
 
