@@ -57,10 +57,10 @@ sender session and destination, it owns `nextSeq`.
 `ReceiverHalf` is the receiver-local half of the same stream: for that
 same sender session and destination, it owns `expected` and `pending`.
 
-The two sides see the product from opposite ends. A sender session may
-have many `SenderHalf`s, one per destination stream. A receiver-side
-`Buffer` sits at one destination stream and contains many `ReceiverHalf`s,
-one per sender `SessionId`.
+The two halves are complementary views of the same stream. A sender
+session may have many `SenderHalf`s, one per destination stream. A
+receiver-side `Buffer` sits at one destination stream and contains many
+`ReceiverHalf`s, one per sender `SessionId`.
 
 ## Dual Half-Sessions
 
@@ -151,12 +151,11 @@ by the concurrent model.
 ## Concurrent Check
 
 The local laws are stated as QuickCheck properties and unit tests. The
-end-to-end law runs through concurrent sender, chaos, and receiver tasks:
+end-to-end law runs through concurrent sender, chaos, and receiver tasks
+connected by channels. Many sender halves feed the same wire; the
+receiver releases outputs in session order.
 
-Many sender halves feed the same wire; the receiver releases outputs in
-session order.
-
-Three tasks run as concurrent threads connected by channels. The sender
+Three tasks run as concurrent threads. The sender
 iterates its payload list, stamps each item with `assign`, and writes
 frames to the wire channel. The chaos worker accumulates a sliding window
 of configurable size, shuffles it, and forwards the reordered frames. The
